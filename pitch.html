@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Vocal Pitch Monitor</title>
-    <!-- Убедитесь, что используете новую версию для борьбы с кэшем -->
-    <link rel="stylesheet" href="pitch.css?v=3">
+    <!-- Не забудьте обновить версию -->
+    <link rel="stylesheet" href="pitch.css?v=4">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
     <div class="app-container">
         
-        <!-- Верхний блок для отображения ноты -->
         <div class="output-display">
             <div class="note-display">
                 <span id="note">--</span>
@@ -23,17 +22,19 @@
             </div>
         </div>
 
-        <!-- Основной блок с пианино и графиком -->
-        <div class="main-content">
-            <div id="piano-container" class="piano-vertical">
-                <!-- Клавиши будут сгенерированы JavaScript -->
+        <div class="main-content" id="main-content">
+            <!-- Вьюпорт для пианино -->
+            <div class="piano-viewport">
+                <div id="piano-container" class="piano-vertical">
+                    <!-- Клавиши будут сгенерированы JavaScript -->
+                </div>
             </div>
-            <div class="canvas-container">
+            <!-- Вьюпорт для графика -->
+            <div class="canvas-viewport">
                 <canvas id="pitch-canvas"></canvas>
             </div>
         </div>
 
-        <!-- Нижний блок для управления -->
         <div class="controls">
             <button id="startButton">Начать</button>
             <p id="status-message">Нажмите "Начать" или сыграйте ноту</p>
@@ -41,7 +42,7 @@
 
     </div>
 
-    <!-- И здесь тоже обновите версию -->
-    <script src="pitch.js?v=3" defer></script>
+    <!-- Обновите версию -->
+    <script src="pitch.js?v=4" defer></script>
 </body>
 </html>
