@@ -75,3 +75,104 @@
 .stats-header:first-of-type {
     margin-top: 0; /* Убираем верхний отступ у первого заголовка */
 }
+
+/* --- СТИЛИ ДЛЯ ТРЕНАЖЕРА --- */
+
+#trainer-info-area {
+    padding: 5px 10px;
+    min-height: 40px;
+    text-align: center;
+}
+
+#trainer-instructions {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+#trainer-progress {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color, #aaa);
+}
+
+.controls #trainerStartButton {
+    width: 80%;
+    max-width: 260px;
+    padding: 12px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    color: var(--tg-theme-button-text-color, #fff);
+    background-color: var(--tg-theme-button-color, #007bff);
+}
+
+.controls #trainerStartButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+/* Стиль для целевой клавиши в тренажере */
+.key.target-exercise {
+    background-color: #28a745; /* Зеленый цвет */
+    transition: background-color 0.3s;
+}
+.key.target-exercise.black {
+    background-color: #218838;
+}
+
+/* Стили для модального окна результатов */
+.results-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.results-actions button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+#restart-button {
+    background-color: var(--tg-theme-button-color, #007bff);
+    color: var(--tg-theme-button-text-color, #fff);
+}
+
+#back-to-menu-button {
+    background-color: #6c757d;
+    color: var(--tg-theme-button-text-color, #fff);
+}
+
+/* --- СТИЛИ ДЛЯ ПОДПИСЕЙ К КЛАВИШАМ (ВОССТАНОВЛЕНО) --- */
+.key-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+    font-weight: 500;
+}
+
+.key.white .key-label {
+    bottom: 5px;
+    font-size: 12px;
+    color: #555;
+    text-align: right;
+    padding-right: 5px;
+}
+
+.key.target .key-label, .key.target-exercise .key-label {
+    color: #fff;
+}
+
+.key.black .key-label {
+    bottom: 3px;
+    font-size: 10px;
+    line-height: 1.2;
+    color: #fff;
+}
+
