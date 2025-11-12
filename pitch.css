@@ -1,133 +1,101 @@
-/* pitch.css */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--tg-theme-bg-color, #f4f4f4);
-    color: var(--tg-theme-text-color, #222);
+/* pitch.css - Версия с вертикальным интерфейсом */
+html, body {
+    height: 100%;
     margin: 0;
-    padding: 15px;
+    padding: 0;
+    overflow: hidden; /* Запрещаем прокрутку */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--tg-theme-bg-color, #121212);
+    color: var(--tg-theme-text-color, #fff);
+}
+
+.app-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    box-sizing: border-box;
+    flex-direction: column;
+    height: 100vh; /* Занимаем всю высоту экрана */
 }
 
-.monitor-container {
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    background-color: var(--tg-theme-secondary-bg-color, #fff);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-h1 { margin-top: 0; font-size: 24px; }
-
+/* Верхний блок */
 .output-display {
-    margin: 20px 0;
-    padding: 15px;
-    background-color: var(--tg-theme-bg-color, #f0f0f0);
-    border-radius: 8px;
+    text-align: center;
+    padding: 10px;
+    background-color: var(--tg-theme-secondary-bg-color, #1e1e1e);
+    flex-shrink: 0;
+    border-bottom: 1px solid #333;
+    transition: background-color 0.3s;
+}
+.note-display { font-size: 36px; font-weight: bold; line-height: 1; }
+#octave { font-size: 18px; vertical-align: super; }
+.details-display { font-size: 12px; color: var(--tg-theme-hint-color, #888); }
+
+/* Основной контент */
+.main-content {
+    display: flex;
+    flex-grow: 1; /* Занимает все оставшееся место */
+    position: relative;
 }
 
-.note-display { font-size: 64px; font-weight: bold; line-height: 1; }
-#octave { font-size: 32px; vertical-align: super; }
-.details-display { margin-top: 10px; font-size: 14px; color: var(--tg-theme-hint-color, #777); }
-
-#pitch-canvas {
-    border: 1px solid var(--tg-theme-hint-color, #ccc);
-    border-radius: 4px;
-    margin: 15px 0;
-    width: 100%;
-    height: auto;
+/* Вертикальное пианино */
+.piano-vertical {
+    flex: 0 0 50px; /* Фиксированная ширина 50px */
+    background: #333;
+    position: relative;
+    border-right: 2px solid #555;
 }
-
-#startButton {
+.key {
+    position: absolute;
     width: 100%;
-    padding: 15px;
-    margin-top: 20px;
-    font-size: 18px;
-    font-weight: bold;
+    box-sizing: border-box;
+    border: 1px solid #000;
     cursor: pointer;
+}
+.key.white {
+    background-color: #fff;
+    z-index: 1;
+}
+.key.black {
+    background-color: #333;
+    width: 60%;
+    z-index: 2;
+}
+.key:active {
+    background-color: #ffc107; /* Подсветка при нажатии */
+}
+
+/* График */
+.canvas-container {
+    flex-grow: 1;
+    position: relative;
+}
+#pitch-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Нижний блок управления */
+.controls {
+    text-align: center;
+    padding: 10px;
+    background-color: var(--tg-theme-secondary-bg-color, #1e1e1e);
+    flex-shrink: 0;
+    border-top: 1px solid #333;
+}
+#startButton {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
     border: none;
     border-radius: 8px;
     color: var(--tg-theme-button-text-color, #fff);
     background-color: var(--tg-theme-button-color, #007bff);
-    transition: background-color 0.2s;
 }
-
 #startButton.listening { background-color: #dc3545; }
-#status-message { margin-top: 15px; font-size: 12px; color: var(--tg-theme-hint-color, #888); }
+#status-message { font-size: 11px; margin: 5px 0 0; color: var(--tg-theme-hint-color, #888); }
 
-/* ======================= НОВЫЕ СТИЛИ ДЛЯ ПИАНИНО ======================= */
-.piano {
-    display: flex;
-    position: relative;
-    height: 120px;
-    margin-top: 25px;
-}
-
-.key {
-    cursor: pointer;
-    border: 1px solid #333;
-    border-radius: 0 0 5px 5px;
-    transition: background-color 0.1s ease;
-}
-
-.key.white {
-    width: 12.5%; /* 100% / 8 white keys */
-    height: 100%;
-    background-color: #fff;
-    border-top: none;
-}
-.key.white:active {
-    background-color: #ddd;
-}
-
-.key.black {
-    position: absolute;
-    width: 8%;
-    height: 60%;
-    background-color: #333;
-    z-index: 2;
-    border-radius: 0 0 3px 3px;
-}
-.key.black:active {
-    background-color: #555;
-}
-
-/* Позиционирование черных клавиш */
-.key[data-note="C#4"] { left: 9.5%; }
-.key[data-note="D#4"] { left: 22%; }
-.key[data-note="F#4"] { left: 47%; }
-.key[data-note="G#4"] { left: 59.5%; }
-.key[data-note="A#4"] { left: 72%; }
-/* ======================================================================= */
-
-/* Добавьте это в конец файла pitch.css */
-
-.output-display.correct {
-    background-color: #28a745; /* Зеленый */
-    color: white;
-}
-
-.output-display.octave-miss {
-    background-color: #ffc107; /* Желтый */
-    color: #333;
-}
-
-.output-display.wrong {
-    background-color: #dc3545; /* Красный */
-    color: white;
-}
-
-/* Стили для дочерних элементов при смене цвета */
-.output-display.correct .details-display,
-.output-display.wrong .details-display {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.output-display.octave-miss .details-display {
-    color: rgba(0, 0, 0, 0.7);
-}
+/* Стили для индикации попадания */
+.output-display.correct { background-color: #28a745; }
+.output-display.octave-miss { background-color: #ffc107; }
+.output-display.wrong { background-color: #dc3545; }

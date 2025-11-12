@@ -2,51 +2,46 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Vocal Pitch Monitor</title>
-    <link rel="stylesheet" href="pitch.css?v=2">
+    <!-- Убедитесь, что используете новую версию для борьбы с кэшем -->
+    <link rel="stylesheet" href="pitch.css?v=3">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
-    <div class="monitor-container">
-        <h1>Vocal Pitch Monitor</h1>
+    <div class="app-container">
         
+        <!-- Верхний блок для отображения ноты -->
         <div class="output-display">
             <div class="note-display">
                 <span id="note">--</span>
                 <span id="octave"></span>
             </div>
             <div class="details-display">
-                <div id="frequency">Частота: --- Hz</div>
                 <div id="cents">Отклонение: --- cents</div>
             </div>
         </div>
-        
-        <canvas id="pitch-canvas" width="350" height="150"></canvas>
-        
-        <!-- ======================= НОВЫЙ БЛОК: ПИАНИНО ======================= -->
-        <div class="piano">
-            <div class="key white" data-note="C4"></div>
-            <div class="key black" data-note="C#4"></div>
-            <div class="key white" data-note="D4"></div>
-            <div class="key black" data-note="D#4"></div>
-            <div class="key white" data-note="E4"></div>
-            <div class="key white" data-note="F4"></div>
-            <div class="key black" data-note="F#4"></div>
-            <div class="key white" data-note="G4"></div>
-            <div class="key black" data-note="G#4"></div>
-            <div class="key white" data-note="A4"></div>
-            <div class="key black" data-note="A#4"></div>
-            <div class="key white" data-note="B4"></div>
-            <div class="key white" data-note="C5"></div>
+
+        <!-- Основной блок с пианино и графиком -->
+        <div class="main-content">
+            <div id="piano-container" class="piano-vertical">
+                <!-- Клавиши будут сгенерированы JavaScript -->
+            </div>
+            <div class="canvas-container">
+                <canvas id="pitch-canvas"></canvas>
+            </div>
         </div>
-        <!-- =================================================================== -->
-        
-        <button id="startButton">Начать анализ</button>
-        <p id="status-message">Нажмите "Начать" или сыграйте ноту на пианино.</p>
+
+        <!-- Нижний блок для управления -->
+        <div class="controls">
+            <button id="startButton">Начать</button>
+            <p id="status-message">Нажмите "Начать" или сыграйте ноту</p>
+        </div>
+
     </div>
 
-    <script src="pitch.js?v=2" defer></script>
+    <!-- И здесь тоже обновите версию -->
+    <script src="pitch.js?v=3" defer></script>
 </body>
 </html>
