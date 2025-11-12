@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vocal Pitch Monitor</title>
     <link rel="stylesheet" href="pitch.css">
-    <!-- Скрипт Telegram Web App для интеграции -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -26,11 +25,28 @@
         
         <canvas id="pitch-canvas" width="350" height="150"></canvas>
         
+        <!-- ======================= НОВЫЙ БЛОК: ПИАНИНО ======================= -->
+        <div class="piano">
+            <div class="key white" data-note="C4"></div>
+            <div class="key black" data-note="C#4"></div>
+            <div class="key white" data-note="D4"></div>
+            <div class="key black" data-note="D#4"></div>
+            <div class="key white" data-note="E4"></div>
+            <div class="key white" data-note="F4"></div>
+            <div class="key black" data-note="F#4"></div>
+            <div class="key white" data-note="G4"></div>
+            <div class="key black" data-note="G#4"></div>
+            <div class="key white" data-note="A4"></div>
+            <div class="key black" data-note="A#4"></div>
+            <div class="key white" data-note="B4"></div>
+            <div class="key white" data-note="C5"></div>
+        </div>
+        <!-- =================================================================== -->
+        
         <button id="startButton">Начать анализ</button>
-        <p id="status-message">Нажмите "Начать", чтобы разрешить доступ к микрофону.</p>
+        <p id="status-message">Нажмите "Начать" или сыграйте ноту на пианино.</p>
     </div>
 
-    <!-- Подключаем нашу логику -->
     <script src="pitch.js" defer></script>
 </body>
 </html>
