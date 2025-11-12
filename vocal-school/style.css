@@ -1,0 +1,200 @@
+:root {
+    --tg-theme-bg-color: #121212;
+    --tg-theme-text-color: #ffffff;
+    --tg-theme-hint-color: #aaaaaa;
+    --tg-theme-button-color: #007bff;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-secondary-bg-color: #1e1e1e;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--tg-theme-bg-color, #121212);
+    color: var(--tg-theme-text-color, #fff);
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.app-container {
+    padding: 15px;
+}
+
+/* --- Стили для главной страницы --- */
+.main-header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.main-header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.main-header p {
+    color: var(--tg-theme-hint-color, #aaa);
+    font-size: 14px;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.menu-button {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--tg-theme-secondary-bg-color, #1e1e1e);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--tg-theme-text-color, #fff);
+    transition: background-color 0.2s;
+}
+
+.menu-button:active {
+    background-color: #333;
+}
+
+.button-icon {
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+.button-text {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* --- Общие элементы (кнопка Назад, заголовки) --- */
+.header-with-back {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: var(--tg-theme-secondary-bg-color, #1e1e1e);
+    border-bottom: 1px solid #333;
+}
+
+.back-button {
+    color: var(--tg-theme-button-color, #007bff);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    margin-right: 15px;
+}
+
+.header-with-back h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+/* --- Стили для страницы упражнений --- */
+.main-category-title {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: var(--tg-theme-text-color, #fff);
+    border-bottom: 2px solid var(--tg-theme-button-color, #007bff);
+    padding-bottom: 5px;
+}
+
+.sub-category-title {
+    font-size: 18px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: var(--tg-theme-hint-color, #aaa);
+}
+
+.exercise-item {
+    background-color: var(--tg-theme-secondary-bg-color, #1e1e1e);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.exercise-header {
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+.indicator {
+    font-size: 20px;
+    color: var(--tg-theme-hint-color, #aaa);
+    transition: transform 0.3s ease;
+}
+
+.exercise-item.active .indicator {
+    transform: rotate(45deg);
+}
+
+.exercise-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding: 0 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--tg-theme-hint-color, #ccc);
+}
+
+.exercise-item.active .exercise-content {
+    padding: 0 15px 15px;
+}
+
+/* --- Стили для структурированного контента упражнений --- */
+
+.exercise-content {
+    /* Увеличим отступы, чтобы текст не прилипал к краям */
+    padding: 0 20px;
+    font-size: 15px; /* Немного увеличим базовый шрифт */
+    color: #e0e0e0; /* Сделаем текст чуть менее ярким для комфорта глаз */
+}
+
+.exercise-item.active .exercise-content {
+    /* Добавим отступ снизу, когда карточка открыта */
+    padding: 10px 20px 20px;
+}
+
+.exercise-section {
+    /* Добавим отступ между секциями "Цель", "Техника" и т.д. */
+    margin-top: 15px;
+}
+.exercise-section:first-child {
+    margin-top: 0;
+}
+
+.exercise-content h4 {
+    /* Стили для заголовков секций (Цель, Техника...) */
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: var(--tg-theme-text-color, #fff);
+    font-weight: 600;
+}
+
+.exercise-content p {
+    /* Стили для параграфов */
+    margin: 0;
+    line-height: 1.6;
+}
+
+.exercise-content ol {
+    /* Стили для нумерованного списка */
+    margin: 0;
+    padding-left: 20px; /* Отступ слева для цифр */
+}
+
+.exercise-content ol li {
+    /* Добавим небольшой отступ между пунктами списка */
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+.exercise-content ol li:last-child {
+    margin-bottom: 0;
+}
