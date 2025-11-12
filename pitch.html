@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocal Pitch Monitor</title>
+    <link rel="stylesheet" href="pitch.css">
+    <!-- Скрипт Telegram Web App для интеграции -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+    <div class="monitor-container">
+        <h1>Vocal Pitch Monitor</h1>
+        
+        <div class="output-display">
+            <div class="note-display">
+                <span id="note">--</span>
+                <span id="octave"></span>
+            </div>
+            <div class="details-display">
+                <div id="frequency">Частота: --- Hz</div>
+                <div id="cents">Отклонение: --- cents</div>
+            </div>
+        </div>
+        
+        <canvas id="pitch-canvas" width="350" height="150"></canvas>
+        
+        <button id="startButton">Начать анализ</button>
+        <p id="status-message">Нажмите "Начать", чтобы разрешить доступ к микрофону.</p>
+    </div>
+
+    <!-- Подключаем нашу логику -->
+    <script src="pitch.js" defer></script>
+</body>
+</html>

@@ -1,27 +1,42 @@
-// Получаем доступ к API Телеграма, который предоставляется в объекте window.Telegram.WebApp
 const tg = window.Telegram.WebApp;
 
-// Функция для применения цветовой схемы Telegram
 function applyTheme() {
-    // document.body.style.setProperty(имя_переменной, значение)
-    // Мы берем цвета из объекта tg.themeParams и устанавливаем их 
-    // для наших CSS-переменных, которые мы определили в style.css
     document.body.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#ffffff');
     document.body.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#191919');
     document.body.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#6952DC');
     document.body.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color || '#ffffff');
     document.body.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color || '#f3f4f6');
+    
+    // Добавляем атрибут для CSS, чтобы можно было стилизовать темную тему
+    if (tg.colorScheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+    } else {
+        document.body.removeAttribute('data-theme');
+    }
 }
 
-// Сообщаем Telegram, что приложение готово к отображению
-tg.ready();
+// НОВАЯ ФУНКЦИЯ ДЛЯ ПРИВЕТСТВИЯ
+function showGreeting() {
+    // Находим наш элемент по ID
+    const greetingElement = document.getElementById('user-greeting');
+    // Проверяем, что элемент существует на странице
+    if (greetingElement) {
+        // Пытаемся получить имя пользователя
+        const userFirstName = tg.initDataUnsafe?.user?.first_name;
+        if (userFirstName) {
+            // Если имя есть, показываем приветствие
+            greetingElement.innerText = `Здравствуйте, ${userFirstName}!`;
+        } else {
+            // Если по какой-то причине имени нет, можно ничего не показывать или показать общее приветствие
+            // greetingElement.innerText = `Здравствуйте!`; 
+        }
+    }
+}
 
-// Раскрываем приложение на всю высоту
+tg.ready();
 tg.expand();
 
-// Вызываем функцию применения темы при первой загрузке
 applyTheme();
+showGreeting(); // Вызываем функцию приветствия при загрузке
 
-// Устанавливаем обработчик события: если пользователь меняет тему в Telegram,
-// наша функция applyTheme будет вызвана снова, чтобы обновить цвета.
 tg.onEvent('themeChanged', applyTheme);

@@ -123,3 +123,19 @@ body {
 .link-button:active {
     transform: scale(0.98);
 }
+
+.greeting {
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: 20px;
+}
+
+.back-button {
+    display: block;
+    text-align: left;
+    margin-bottom: 20px;
+    color: var(--tg-theme-hint-color); /* Используем цвет для подсказок, чтобы кнопка не была слишком яркой */
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+}
