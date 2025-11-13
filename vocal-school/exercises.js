@@ -23,8 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(indexPath);
       const categoriesIndex = await response.json();
 
-      // --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
-      // Добавляем класс .header-with-back-button к header
       container.innerHTML = `
                 <header class="main-header header-with-back-button">
                     <a href="main_vocal.html" class="back-button">← Назад</a>
@@ -32,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 </header>
                 <div class="menu"></div>
             `;
-      // --- КОНЕЦ ИЗМЕНЕНИЯ ---
 
       const menuContainer = container.querySelector(".menu");
 
@@ -72,12 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
       container.innerHTML = "";
 
       const mainHeader = document.createElement("header");
-
-      // --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
-      // Добавляем класс .header-with-back-button к header
       mainHeader.className = "main-header header-with-back-button";
-      // --- КОНЕЦ ИЗМЕНЕНИЯ ---
-
       mainHeader.innerHTML = `
                 <a href="exercises.html" class="back-button">← К разделам</a>
                 <h1>${mainCategoryTitle}</h1>
@@ -107,6 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function createExerciseElement(exercise) {
     const item = document.createElement("div");
     item.className = "exercise-item";
+    // --- КРИТИЧЕСКАЯ ОШИБКА ИСПРАВЛЕНА ---
+    // Добавлен класс "indicator" для спана с плюсом. Без него аккордеон не работал.
     item.innerHTML = `
             <div class="exercise-header">
                 <span>${exercise.title}</span><span class="indicator">+</span>

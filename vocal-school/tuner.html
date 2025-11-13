@@ -2,7 +2,6 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <base href="/kondrashev-card/vocal-school/" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
@@ -23,9 +22,8 @@
           <span id="note">--</span>
           <span id="octave"></span>
           <button id="referenceToneButton" class="hidden">
-            <!-- ИСПРАВЛЕН SVG -->
             <svg
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="http://www.w.org/2000/svg"
               width="24"
               height="24"
               viewBox="0 0 24 24"
@@ -39,6 +37,7 @@
         </div>
         <div class="details-display">
           <div id="target-note-display"></div>
+          <!-- Этот элемент теперь будет показывать либо подсказку, либо отклонение -->
           <div id="cents">Отклонение: --- cents</div>
           <div class="tuner-container">
             <div class="tuner-bar">
@@ -71,12 +70,12 @@
         <div class="main-controls">
           <button id="startButton">Начать</button>
           <button id="holdButton">Заморозить</button>
-          <p id="status-message">Нажмите "Начать" или сыграйте ноту</p>
+          <!-- ИЗМЕНЕНИЕ: Убрали текст-заглушку отсюда -->
+          <p id="status-message"></p>
         </div>
         <button id="statsButton" class="icon-btn hidden">
-          <!-- ИСПРАВЛЕН SVG -->
           <svg
-            xmlns="http://www.w3.org/2000/svg"
+            xmlns="http://www.w.org/2000/svg"
             width="24"
             height="24"
             viewBox="0 0 24 24"
@@ -91,7 +90,6 @@
       </div>
     </div>
 
-    <!-- ИСПРАВЛЕНО: Добавлено содержимое модального окна -->
     <div id="stats-modal" class="modal-backdrop hidden">
       <div class="modal-content">
         <div class="modal-header">
@@ -135,6 +133,7 @@
       </div>
     </div>
 
-    <script src="tuner.js?v=8" defer></script>
+    <script src="tuner.js?v=9" defer></script>
+    <!-- Изменил версию скрипта, чтобы избежать кэширования -->
   </body>
 </html>

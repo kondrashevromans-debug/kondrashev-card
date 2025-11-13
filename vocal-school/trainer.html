@@ -2,15 +2,14 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <base href="/kondrashev-card/vocal-school/" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
     <title>Тренажер</title>
     <link rel="stylesheet" href="style.css?v=8" />
-    <!-- ИЗМЕНЕНА ВЕРСИЯ -->
-    <link rel="stylesheet" href="tuner.css?v=10" />
+    <!-- ИЗМЕНЕНА ВЕРСЯ СТИЛЕЙ -->
+    <link rel="stylesheet" href="tuner.css?v=11" />
   </head>
   <body>
     <div class="header-with-back">
@@ -46,9 +45,12 @@
         </div>
       </div>
 
+      <!-- --- ИЗМЕНЕНИЕ: ОБНОВЛЕН БЛОК УПРАВЛЕНИЯ --- -->
       <div class="controls">
         <button id="trainerStartButton">Начать упражнение</button>
-        <p id="status-message">Нажмите, чтобы начать</p>
+        <!-- Новая кнопка, изначально скрыта -->
+        <button id="trainerStopButton" class="hidden">Остановить</button>
+        <!-- Элемент с текстом-подсказкой полностью удален -->
       </div>
     </div>
 
@@ -67,8 +69,7 @@
       </div>
     </div>
 
-    <!-- ИЗМЕНЕНА ВЕРСИЯ -->
-    <script src="trainer_data.js?v=10"></script>
-    <script src="trainer.js?v=10" defer></script>
+    <!-- ИЗМЕНЕНА ВЕРСИЯ СКРИПТА -->
+    <script src="trainer.js?v=11" defer></script>
   </body>
 </html>

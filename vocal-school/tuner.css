@@ -223,9 +223,10 @@
 
 .controls {
   display: flex;
+  /* --- ИЗМЕНЕНИЕ: Кнопки теперь по центру --- */
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px; /* Добавлен отступ между кнопками */
+  gap: 12px; /* Увеличим отступ между кнопками */
   padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); /* Безопасная зона */
   background-color: var(--tg-theme-secondary-bg-color, #1e1e1e);
   flex-shrink: 0;
@@ -449,20 +450,34 @@
   color: var(--tg-theme-hint-color, #aaa);
 }
 
-.controls #trainerStartButton {
-  width: 80%;
-  max-width: 260px;
+.controls #trainerStartButton,
+.controls #trainerStopButton {
+  /* Общие стили для обеих кнопок */
   padding: 12px;
   font-size: 18px;
   border: none;
   border-radius: 8px;
   color: var(--tg-theme-button-text-color, #fff);
+  flex-grow: 1; /* Кнопки будут растягиваться */
+  max-width: 260px; /* Но не слишком сильно */
+}
+
+.controls #trainerStartButton {
   background-color: var(--tg-theme-button-color, #007bff);
 }
 
 .controls #trainerStartButton:disabled {
   background-color: #555;
+  color: #aaa;
   cursor: not-allowed;
+  flex-grow: 0; /* Чтобы не растягивалась в выключенном состоянии */
+  width: 200px;
+}
+
+/* НОВЫЙ СТИЛЬ для кнопки "Остановить" */
+.controls #trainerStopButton {
+  background-color: #6c757d; /* Серый цвет для вторичного действия */
+  max-width: 140px;
 }
 
 /* Модальное окно результатов тренажера */
@@ -471,15 +486,6 @@
   flex-direction: column;
   gap: 10px;
   margin-top: 20px;
-}
-
-.results-actions button {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
 }
 
 #restart-button {

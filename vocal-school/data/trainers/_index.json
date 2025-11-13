@@ -2,19 +2,16 @@
   {
     "id": "five_note_sequence_c4",
     "title": "Пятинотка (от До)",
-    "file": "five_note_sequence_c4.json",
     "baseNote": "C4"
   },
   {
     "id": "major_arpeggio_g3",
     "title": "Арпеджио (от Соль)",
-    "file": "major_arpeggio_g3.json",
     "baseNote": "G3"
   },
   {
     "id": "interval_major_third_f4",
     "title": "Интервал: Большая терция (от Фа)",
-    "file": "interval_major_third_f4.json",
     "baseNote": "F4"
   }
 ]

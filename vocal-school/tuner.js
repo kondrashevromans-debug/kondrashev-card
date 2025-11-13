@@ -1,10 +1,9 @@
-// pitch.js (Версия 7 - Статистика сеанса)
+// pitch.js (Версия 9 - Изменения UI)
 
 document.addEventListener("DOMContentLoaded", () => {
   // --- Идентификация пользователя и загрузка прогресса ---
   let userId = null;
   let userProgress = {};
-  // --- НОВЫЙ ОБЪЕКТ ДЛЯ СТАТИСТИКИ СЕАНСА ---
   let sessionStats;
 
   if (window.Telegram && window.Telegram.WebApp) {
@@ -30,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const canvasCtx = canvas.getContext("2d");
   const holdButton = document.getElementById("holdButton");
   const tunerIndicator = document.getElementById("tuner-indicator");
+  // --- НОВЫЙ ЭЛЕМЕНТ ---
+  const tunerContainer = document.querySelector(".tuner-container");
   const referenceToneButton = document.getElementById("referenceToneButton");
   const targetNoteDisplay = document.getElementById("target-note-display");
   const octaveUpBtn = document.getElementById("octaveUp");
@@ -121,12 +122,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let recentCents = [];
 
   // --- Логика Прогресса и Статистики ---
+  // ... (весь этот блок без изменений)
   const XP_PER_SECOND = 1;
   const levelThresholds = [
     0, 120, 360, 720, 1500, 3000, 6000, 12000, 24000, 50000,
   ];
 
-  // Инициализация статистики сеанса (вызывается при загрузке)
   function initializeSessionStats() {
     sessionStats = {
       noteStats: {},
@@ -170,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
       userProgress = getDefaultProgress();
     }
     updateProgressUI();
-    checkDailyReminder();
   }
 
   function saveProgress() {
@@ -207,12 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     progressArea.classList.remove("hidden");
     statsButton.classList.remove("hidden");
   }
-  function checkDailyReminder() {
-    const today = new Date().toDateString();
-    if (userProgress.lastPracticeDate !== today) {
-      statusMessage.textContent = "Вы сегодня еще не занимались. Начнем?";
-    }
-  }
+
   function updateLastPracticeDate() {
     const today = new Date().toDateString();
     if (userProgress.lastPracticeDate !== today) {
@@ -226,16 +221,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${min} мин ${sec} сек`;
   }
 
-  // --- ОБНОВЛЕННАЯ ФУНКЦИЯ ОТОБРАЖЕНИЯ СТАТИСТИКИ ---
   function openStatsModal() {
-    // Функция-помощник для заполнения блока статистики
     const populateStatsBlock = (
       stats,
       bestNoteEl,
       longestHoldEl,
       bestIntonationEl
     ) => {
-      // Любимая нота
       let bestNote = null;
       let maxTime = 0;
       for (const note in stats.noteStats) {
@@ -250,7 +242,6 @@ document.addEventListener("DOMContentLoaded", () => {
         bestNoteEl.textContent = "--";
       }
 
-      // Самое долгое удержание
       if (stats.longestHold && stats.longestHold.note) {
         longestHoldEl.textContent = `${formatTime(
           stats.longestHold.time
@@ -261,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
         )}`;
       }
 
-      // Лучшая точность
       if (stats.bestIntonation && stats.bestIntonation.cents < 999) {
         bestIntonationEl.textContent = `±${stats.bestIntonation.cents.toFixed(
           1
@@ -270,27 +260,22 @@ document.addEventListener("DOMContentLoaded", () => {
         bestIntonationEl.textContent = "--";
       }
     };
-
-    // Заполняем блок "За этот сеанс"
     populateStatsBlock(
       sessionStats,
       sessionBestNoteStat,
       sessionLongestHoldStat,
       sessionBestIntonationStat
     );
-
-    // Заполняем блок "За всё время"
     populateStatsBlock(
       userProgress,
       allTimeBestNoteStat,
       allTimeLongestHoldStat,
       allTimeBestIntonationStat
     );
-
     statsModal.classList.remove("hidden");
   }
 
-  // --- Инициализация и базовые функции (без изменений) ---
+  // --- Инициализация и базовые функции ---
   function initAudioContext() {
     if (!audioContext) {
       try {
@@ -306,6 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
       audioContext.resume();
     }
   }
+
   async function startListening() {
     if (isListening || !navigator.mediaDevices || !audioContext) return;
     try {
@@ -319,11 +305,16 @@ document.addEventListener("DOMContentLoaded", () => {
       isListening = true;
       startButton.textContent = "Остановить";
       startButton.classList.add("listening");
+
+      // --- ИЗМЕНЕНИЕ: Показываем элементы и меняем текст при старте ---
+      tunerContainer.style.visibility = "visible";
+      centsElement.textContent = "Пойте в микрофон...";
     } catch (err) {
       statusMessage.textContent = "Ошибка доступа к микрофону.";
       console.error(err);
     }
   }
+
   function stopListening() {
     if (!isListening || !sourceNode) return;
     sourceNode.mediaStream.getTracks().forEach((track) => track.stop());
@@ -332,11 +323,15 @@ document.addEventListener("DOMContentLoaded", () => {
     isListening = false;
     startButton.textContent = "Начать";
     startButton.classList.remove("listening");
-    statusMessage.textContent = 'Нажмите "Начать" или сыграйте ноту';
+
+    // --- ИЗМЕНЕНИЕ: Вызываем resetDisplay для возврата к исходному состоянию ---
     resetDisplay();
+
     stopReferenceTone();
     if (isFrozen) toggleFreeze();
   }
+
+  // ... (setupUI, noteNumToY, drawPitchGraph без изменений) ...
   function setupUI() {
     if (!mainContent.clientHeight) {
       setTimeout(setupUI, 50);
@@ -458,7 +453,7 @@ document.addEventListener("DOMContentLoaded", () => {
     canvasCtx.stroke();
   }
 
-  // --- Главный цикл (с новой, надежной логикой) ---
+  // --- Главный цикл ---
   function mainLoop() {
     let distance = targetScrollOffset - scrollOffsetPixels;
     if (Math.abs(distance) > 0.1) {
@@ -488,15 +483,45 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
+      // --- ИЗМЕНЕНИЕ: Логика обновления дисплея перенесена сюда ---
+      if (pitchInfo) {
+        noteElement.textContent = pitchInfo.note;
+        octaveElement.textContent = pitchInfo.octave;
+        centsElement.textContent = `Отклонение: ${pitchInfo.cents.toFixed(
+          0
+        )} cents`;
+        updateTuner(pitchInfo.cents);
+        if (!isManuallyScrolling) {
+          scrollToNote(pitchInfo.noteNum);
+        }
+        if (targetNote) {
+          const sungNoteWithOctave = pitchInfo.note + pitchInfo.octave;
+          display.classList.remove("correct", "octave-miss", "wrong");
+          if (sungNoteWithOctave === targetNote) {
+            display.classList.add("correct");
+          } else if (pitchInfo.note === targetNote.replace(/[0-9]/g, "")) {
+            display.classList.add("octave-miss");
+          } else {
+            display.classList.add("wrong");
+          }
+        }
+      } else {
+        // Если слушаем, но звука нет
+        noteElement.textContent = "--";
+        octaveElement.textContent = "";
+        centsElement.textContent = "Пойте в микрофон...";
+        updateTuner(null);
+        display.classList.remove("correct", "octave-miss", "wrong");
+      }
+
+      // Логика прогресса (остается без изменений)
       let isCorrectNote = false;
       if (pitchInfo && targetNote) {
-        const sungNoteWithOctave = pitchInfo.note + pitchInfo.octave;
-        if (sungNoteWithOctave === targetNote) {
+        if (pitchInfo.note + pitchInfo.octave === targetNote) {
           isCorrectNote = true;
         }
       }
 
-      // --- ОБНОВЛЕННАЯ ЛОГИКА ПРОГРЕССА С ДВОЙНОЙ СТАТИСТИКОЙ ---
       if (isCorrectNote) {
         if (successfulSingTimeStart === 0) successfulSingTimeStart = Date.now();
         currentStreak = (Date.now() - successfulSingTimeStart) / 1000;
@@ -507,11 +532,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (recentCents.length === 60) {
           const avgCents =
             recentCents.reduce((a, b) => a + b, 0) / recentCents.length;
-          // Обновляем статистику сеанса
           if (avgCents < sessionStats.bestIntonation.cents) {
             sessionStats.bestIntonation = { cents: avgCents, note: targetNote };
           }
-          // Обновляем общую статистику
           if (avgCents < userProgress.bestIntonation.cents) {
             userProgress.bestIntonation = { cents: avgCents, note: targetNote };
           }
@@ -520,8 +543,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (successfulSingTimeStart > 0) {
           const elapsedSeconds = (Date.now() - successfulSingTimeStart) / 1000;
           userProgress.xp += Math.round(elapsedSeconds * XP_PER_SECOND);
-
-          // --- Обновляем статистику сеанса ---
           if (!sessionStats.noteStats[targetNote])
             sessionStats.noteStats[targetNote] = 0;
           sessionStats.noteStats[targetNote] += elapsedSeconds;
@@ -531,8 +552,6 @@ document.addEventListener("DOMContentLoaded", () => {
               note: targetNote,
             };
           }
-
-          // --- Обновляем общую статистику ---
           if (!userProgress.noteStats[targetNote])
             userProgress.noteStats[targetNote] = 0;
           userProgress.noteStats[targetNote] += elapsedSeconds;
@@ -550,7 +569,7 @@ document.addEventListener("DOMContentLoaded", () => {
         recentCents = [];
       }
 
-      // --- Логика отрисовки (не зависит от прогресса) ---
+      // --- Логика отрисовки графика ---
       if (lastFramePitch === null && currentPitch !== null) {
         ignoreFramesCounter = 10;
       }
@@ -558,32 +577,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (ignoreFramesCounter > 0) {
         pitchToGraph = null;
         ignoreFramesCounter--;
-      }
-
-      if (pitchInfo) {
-        noteElement.textContent = pitchInfo.note;
-        octaveElement.textContent = pitchInfo.octave;
-        centsElement.textContent = `Отклонение: ${pitchInfo.cents.toFixed(
-          0
-        )} cents`;
-        updateTuner(pitchInfo.cents);
-        if (!isManuallyScrolling) {
-          scrollToNote(pitchInfo.noteNum);
-        }
-        if (targetNote) {
-          const sungNoteName = pitchInfo.note;
-          const targetNoteName = targetNote.replace(/[0-9]/g, "");
-          display.classList.remove("correct", "octave-miss", "wrong");
-          if (isCorrectNote) {
-            display.classList.add("correct");
-          } else if (sungNoteName === targetNoteName) {
-            display.classList.add("octave-miss");
-          } else {
-            display.classList.add("wrong");
-          }
-        }
-      } else {
-        display.classList.remove("correct", "octave-miss", "wrong");
       }
 
       if (Date.now() - lastSaveTime > 5000) {
@@ -614,7 +607,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     targetNote = newTargetNote;
     targetNoteDisplay.textContent = `Цель: ${targetNote}`;
-    statusMessage.textContent = "";
     referenceToneButton.classList.remove("hidden");
     isManuallyScrolling = false;
     const freq = noteToFrequency(targetNote);
@@ -623,6 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (noteNum) scrollToNote(noteNum, true);
     if (!isListening) startListening();
   }
+
   startButton.addEventListener("click", () => {
     initAudioContext();
     if (!audioContext) return;
@@ -634,13 +627,14 @@ document.addEventListener("DOMContentLoaded", () => {
       stopReferenceTone();
       referenceToneButton.classList.add("hidden");
       targetNoteDisplay.textContent = "";
-      statusMessage.textContent = "Свободный режим";
       isManuallyScrolling = false;
       startListening();
     } else {
       stopListening();
     }
   });
+
+  // ... (остальные обработчики без изменений) ...
   holdButton.addEventListener("click", toggleFreeze);
   referenceToneButton.addEventListener("click", toggleReferenceTone);
   statsButton.addEventListener("click", openStatsModal);
@@ -697,17 +691,23 @@ document.addEventListener("DOMContentLoaded", () => {
       referenceToneButton.classList.remove("active");
     }
   }
+
+  // --- ИЗМЕНЕНИЕ: Обновленная функция для сброса дисплея ---
   function resetDisplay() {
     noteElement.textContent = "--";
     octaveElement.textContent = "";
-    centsElement.textContent = `Отклонение: --- cents`;
+    centsElement.textContent = "Нажмите 'Начать' или сыграйте ноту";
+    statusMessage.textContent = ""; // Очищаем нижнее сообщение
     if (!targetNote) {
       targetNoteDisplay.textContent = "";
     }
     pitchHistory = [];
     updateTuner(null);
+    tunerContainer.style.visibility = "hidden"; // Скрываем полосу тюнера
     drawPitchGraph();
   }
+
+  // ... (остальные утилиты без изменений) ...
   function scrollToNote(noteNum, immediate = false) {
     const whiteKeysAbove = Array.from(
       { length: MAX_NOTE_NUM - noteNum },
@@ -855,9 +855,12 @@ document.addEventListener("DOMContentLoaded", () => {
   octaveDownBtn.addEventListener("click", () => jumpOctave(1));
 
   // --- Финальная инициализация ---
-  initializeSessionStats(); // Инициализируем статистику сеанса
+  initializeSessionStats();
   loadProgress();
   setTimeout(setupUI, 50);
   window.addEventListener("resize", setupUI);
+
+  // --- ИЗМЕНЕНИЕ: Устанавливаем начальное состояние интерфейса при загрузке ---
+  resetDisplay();
   mainLoop();
 });

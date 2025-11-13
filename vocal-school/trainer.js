@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- DOM-элементы ---
   const startButton = document.getElementById("trainerStartButton"),
+    stopButton = document.getElementById("trainerStopButton"), // Новая кнопка
     noteElement = document.getElementById("note"),
     octaveElement = document.getElementById("octave"),
     centsElement = document.getElementById("cents"),
-    statusMessage = document.getElementById("status-message"),
     pianoContainer = document.getElementById("piano-container"),
     canvas = document.getElementById("pitch-canvas"),
     canvasCtx = canvas.getContext("2d"),
@@ -74,11 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     allNoteScores = [];
 
   // --- ОСНОВНАЯ ЛОГИКА ---
-
-  /**
-   * Инициализация тренажера.
-   * Асинхронно загружает данные упражнения на основе параметров URL.
-   */
   async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     exerciseId = urlParams.get("exercise");
@@ -87,12 +82,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const difficulty = urlParams.get("difficulty") || "normal";
 
     if (!exerciseId) {
-      statusMessage.textContent = "Ошибка: ID упражнения не указан в URL.";
       startButton.disabled = true;
       return;
     }
 
-    // Устанавливаем допуск в зависимости от сложности
     switch (difficulty) {
       case "easy":
         centTolerance = 50;
@@ -108,8 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // АСИНХРОННАЯ ЗАГРУЗКА: Загружаем данные упражнения из JSON-файла
-      // вместо использования глобальной переменной trainerData.
       const response = await fetch(`data/trainers/${exerciseId}.json`);
       if (!response.ok) {
         throw new Error(
@@ -118,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const originalExercise = await response.json();
 
-      // Дальнейшая логика остается прежней, но работает с загруженными данными
       currentExercise = applyOctaveShift(originalExercise, octaveShift);
       trainerTitleElement.textContent = currentExercise.title;
 
@@ -127,9 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mainLoop();
     } catch (error) {
       console.error("Ошибка при загрузке данных упражнения:", error);
-      statusMessage.textContent = "Не удалось загрузить данные упражнения.";
       startButton.disabled = true;
-      // Отображаем сообщение об ошибке прямо в основном контенте
       mainContent.innerHTML = `<div class="error-container">
           <h2>Ошибка загрузки</h2>
           <p>Не удалось загрузить данные для тренажера. Пожалуйста, проверьте консоль для получения дополнительной информации и попробуйте вернуться в меню.</p>
@@ -138,11 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Главный цикл рендеринга и анализа звука.
-   */
   function mainLoop() {
-    // Плавная прокрутка пианино
     let distance = targetScrollOffset - scrollOffsetPixels;
     if (Math.abs(distance) > 0.01) {
       scrollOffsetPixels += distance * 0.1;
@@ -163,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
       let currentPitch = null,
         pitchInfo = null;
       if (rms > 0.01) {
-        // Проверяем, есть ли звук
         const pitch = yin(dataArray, audioContext.sampleRate);
         if (pitch !== -1) {
           currentPitch = pitch;
@@ -171,7 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // Игнорируем первые несколько кадров после начала звука для стабильности
       if (lastFramePitch === null && currentPitch !== null) {
         ignoreFramesCounter = 10;
       }
@@ -184,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       updatePitchDisplay(pitchInfo);
 
-      // Логика проверки попадания в ноту
       if (state === "LISTENING" && pitchInfo) {
         const targetNoteNum = noteToNoteNum(
           currentExercise.notes[currentNoteIndex].noteName
@@ -202,13 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
             goToNextNote();
           }
         } else {
-          noteStartTime = 0; // Сбрасываем таймер, если нота неверная
+          noteStartTime = 0;
         }
       } else {
         noteStartTime = 0;
       }
 
-      // Обновляем историю питча для графика
       pitchHistory.push(pitchToProcess);
       if (pitchHistory.length > PITCH_HISTORY_SIZE) pitchHistory.shift();
       lastFramePitch = currentPitch;
@@ -227,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateUI();
     startButton.textContent = "Начать упражнение";
     startButton.disabled = false;
-    statusMessage.textContent = "Нажмите, чтобы начать";
+    stopButton.classList.add("hidden"); // Скрываем кнопку "Остановить"
     resultsModal.classList.add("hidden");
   }
 
@@ -245,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     startButton.textContent = "Упражнение идет...";
     startButton.disabled = true;
-    statusMessage.textContent = "";
+    stopButton.classList.remove("hidden"); // Показываем кнопку "Остановить"
   }
 
   function goToNextNote() {
@@ -272,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showResults();
     startButton.textContent = "Начать заново";
     startButton.disabled = false;
-    statusMessage.textContent = "Упражнение завершено!";
+    stopButton.classList.add("hidden"); // Скрываем кнопку "Остановить"
   }
 
   function showResults() {
@@ -370,7 +350,6 @@ document.addEventListener("DOMContentLoaded", () => {
       height = canvas.height;
     canvasCtx.clearRect(0, 0, width, height);
 
-    // Рисуем линии белых клавиш
     const totalWhiteKeys = Array.from(
       { length: MAX_NOTE_NUM - MIN_NOTE_NUM + 1 },
       (_, i) => i + MIN_NOTE_NUM
@@ -385,7 +364,6 @@ document.addEventListener("DOMContentLoaded", () => {
       canvasCtx.stroke();
     }
 
-    // Рисуем целевую зону
     if (
       (state === "LISTENING" || state === "FEEDBACK") &&
       currentExercise &&
@@ -408,7 +386,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Рисуем график питча
     canvasCtx.strokeStyle = "#ffc107";
     canvasCtx.lineWidth = 2;
     canvasCtx.beginPath();
@@ -484,7 +461,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalHeight = totalWhiteKeys * WHITE_KEY_PIXELS;
     pianoContainer.style.height = `${totalHeight}px`;
     canvas.height = totalHeight;
-    canvas.width = canvas.parentElement.clientWidth;
+    if (canvas.parentElement) {
+      canvas.width = canvas.parentElement.clientWidth;
+    }
     maxScrollOffset = totalHeight - mainContent.clientHeight;
 
     pianoContainer.innerHTML = "";
@@ -555,10 +534,9 @@ document.addEventListener("DOMContentLoaded", () => {
       dataArray = new Float32Array(analyser.fftSize);
       sourceNode = audioContext.createMediaStreamSource(stream);
       sourceNode.connect(analyser);
-      analyser.connect(dummyGainNode); // Подключаем к "тихому" узлу
+      analyser.connect(dummyGainNode);
       isListening = true;
     } catch (err) {
-      statusMessage.textContent = "Ошибка доступа к микрофону.";
       console.error("Microphone access error:", err);
     }
   }
@@ -661,7 +639,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Обработчики событий ---
   startButton.addEventListener("click", startExercise);
-  restartButton.addEventListener("click", resetExercise);
+
+  stopButton.addEventListener("click", () => {
+    if (isListening) {
+      stopListening();
+    }
+    resetExercise();
+  });
+
+  restartButton.addEventListener("click", () => {
+    resetExercise();
+    startExercise();
+  });
+
   backToMenuButton.addEventListener("click", () => {
     window.location.href = "trainer_menu.html";
   });
