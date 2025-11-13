@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable-no">
-    <title>Упражнения</title>
-    <link rel="stylesheet" href="style.css?v=8">
-</head>
-<body>
-    <div class="header-with-back">
-        <a href="main_vocal.html" class="back-button">‹ Назад</a>
-        <h2>Упражнения</h2>
-    </div>
-    <div class="app-container" id="exercises-container">
-        <!-- Упражнения будут загружены сюда с помощью JavaScript -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Упражнения - Vocal Coach</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- 
+            Этот контейнер теперь будет динамически заполняться:
+            - Либо главным меню категорий.
+            - Либо списком упражнений для выбранной категории.
+        -->
+      <div id="exercises-container">
+        <!-- Сюда будет загружаться контент -->
+      </div>
     </div>
 
-    <!-- ИЗМЕНЕНА ВЕРСИЯ ФАЙЛОВ, ЧТОБЫ СБРОСИТЬ КЭШ БРАУЗЕРА -->
-    <script src="data.js?v=9"></script>
-    <script src="exercises.js?v=9"></script>
-</body>
+    <!-- Подключаем наш новый, умный скрипт -->
+    <script src="exercises.js" defer></script>
+  </body>
 </html>

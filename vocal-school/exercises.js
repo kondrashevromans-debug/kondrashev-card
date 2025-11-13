@@ -1,111 +1,175 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('exercises-container');
-    if (!container || !exercisesData) {
-        console.error('Container or exercises data not found!');
-        return;
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("exercises-container");
+  const indexPath = "data/exercises/_index.json";
+
+  if (!container) {
+    console.error("Container element not found!");
+    return;
+  }
+
+  function init() {
+    const params = new URLSearchParams(window.location.search);
+    const categoryId = params.get("category");
+
+    if (categoryId) {
+      renderCategoryPage(categoryId);
+    } else {
+      renderMainMenu();
     }
+  }
 
-    // Главный цикл для создания HTML
-    for (const mainCategoryTitle in exercisesData) {
-        const mainCategoryData = exercisesData[mainCategoryTitle];
+  async function renderMainMenu() {
+    try {
+      const response = await fetch(indexPath);
+      const categoriesIndex = await response.json();
 
-        // Создаем главный заголовок (например, "АРТИКУЛЯЦИОННЫЙ АППАРАТ")
-        const mainHeader = document.createElement('h1');
-        mainHeader.className = 'main-category-title';
-        mainHeader.textContent = mainCategoryTitle;
-        container.appendChild(mainHeader);
+      // --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
+      // Добавляем класс .header-with-back-button к header
+      container.innerHTML = `
+                <header class="main-header header-with-back-button">
+                    <a href="main_vocal.html" class="back-button">← Назад</a>
+                    <h1>Разделы упражнений</h1>
+                </header>
+                <div class="menu"></div>
+            `;
+      // --- КОНЕЦ ИЗМЕНЕНИЯ ---
 
-        mainCategoryData.forEach(categoryGroup => {
-            // Создаем подзаголовок (например, "Челюсть")
-            const subHeader = document.createElement('h3');
-            subHeader.className = 'sub-category-title';
-            subHeader.textContent = categoryGroup.category;
-            container.appendChild(subHeader);
+      const menuContainer = container.querySelector(".menu");
 
-            // Создаем контейнер для упражнений в этой подкатегории
-            const exercisesList = document.createElement('div');
-            exercisesList.className = 'exercises-list';
-            
-            categoryGroup.exercises.forEach(exercise => {
-                const exerciseItem = document.createElement('div');
-                exerciseItem.className = 'exercise-item';
-
-                const exerciseHeader = document.createElement('div');
-                exerciseHeader.className = 'exercise-header';
-                exerciseHeader.innerHTML = `<span>${exercise.title}</span><span class="indicator">+</span>`;
-                
-                const exerciseContent = document.createElement('div');
-				exerciseContent.className = 'exercise-content';
-
-				const desc = exercise.description;
-
-				// Генерируем HTML из структурированных данных
-				let contentHtml = '';
-				if (desc.goal) {
-					contentHtml += `
-						<div class="exercise-section">
-							<h4>Цель:</h4>
-							<p>${desc.goal}</p>
-						</div>
-					`;
-				}
-				if (desc.technique && desc.technique.length > 0) {
-					contentHtml += `
-						<div class="exercise-section">
-							<h4>Техника выполнения:</h4>
-							<ol>
-								${desc.technique.map(step => `<li>${step}</li>`).join('')}
-							</ol>
-						</div>
-					`;
-				}
-				if (desc.sensation) {
-					contentHtml += `
-						<div class="exercise-section">
-							<h4>Что вы почувствуете:</h4>
-							<p>${desc.sensation}</p>
-						</div>
-					`;
-				}
-				exerciseContent.innerHTML = contentHtml;
-
-                exerciseItem.appendChild(exerciseHeader);
-                exerciseItem.appendChild(exerciseContent);
-                exercisesList.appendChild(exerciseItem);
-            });
-
-            container.appendChild(exercisesList);
-        });
+      categoriesIndex.forEach((category) => {
+        const link = document.createElement("a");
+        link.href = `?category=${category.id}`;
+        link.className = "menu-button";
+        link.innerHTML = `
+                    <span class="button-icon">${category.icon}</span>
+                    <span class="button-text">${category.title}</span>
+                `;
+        menuContainer.appendChild(link);
+      });
+    } catch (error) {
+      console.error("Failed to render main menu:", error);
+      container.innerHTML =
+        '<p class="error-message">Не удалось загрузить разделы.</p>';
     }
+  }
 
-    // Добавляем обработчик кликов (используем делегирование)
-    container.addEventListener('click', (event) => {
-        const header = event.target.closest('.exercise-header');
-        if (!header) return;
+  async function renderCategoryPage(categoryId) {
+    try {
+      const indexResponse = await fetch(indexPath);
+      const categoriesIndex = await indexResponse.json();
+      const categoryInfo = categoriesIndex.find((cat) => cat.id === categoryId);
 
-        const item = header.parentElement;
-        const content = item.querySelector('.exercise-content');
-        const indicator = header.querySelector('.indicator');
-        
-        // Логика "аккордеона"
-        if (item.classList.contains('active')) {
-            // Закрыть текущий
-            content.style.maxHeight = null;
-            item.classList.remove('active');
-            indicator.textContent = '+';
-        } else {
-            // Закрыть все остальные
-            const allActiveItems = container.querySelectorAll('.exercise-item.active');
-            allActiveItems.forEach(activeItem => {
-                activeItem.classList.remove('active');
-                activeItem.querySelector('.exercise-content').style.maxHeight = null;
-                activeItem.querySelector('.indicator').textContent = '+';
-            });
+      if (!categoryInfo) {
+        throw new Error(`Category with id "${categoryId}" not found in index.`);
+      }
 
-            // Открыть текущий
-            item.classList.add('active');
-            content.style.maxHeight = content.scrollHeight + "px";
-            indicator.textContent = '−';
-        }
-    });
+      const categoryResponse = await fetch(categoryInfo.path);
+      const categoryData = await categoryResponse.json();
+
+      const mainCategoryTitle = Object.keys(categoryData)[0];
+      const subCategories = categoryData[mainCategoryTitle];
+
+      container.innerHTML = "";
+
+      const mainHeader = document.createElement("header");
+
+      // --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
+      // Добавляем класс .header-with-back-button к header
+      mainHeader.className = "main-header header-with-back-button";
+      // --- КОНЕЦ ИЗМЕНЕНИЯ ---
+
+      mainHeader.innerHTML = `
+                <a href="exercises.html" class="back-button">← К разделам</a>
+                <h1>${mainCategoryTitle}</h1>
+            `;
+      container.appendChild(mainHeader);
+
+      subCategories.forEach((group) => {
+        const subHeader = document.createElement("h3");
+        subHeader.className = "sub-category-title";
+        subHeader.textContent = group.category;
+        container.appendChild(subHeader);
+
+        const exercisesList = document.createElement("div");
+        exercisesList.className = "exercises-list";
+        group.exercises.forEach((ex) =>
+          exercisesList.appendChild(createExerciseElement(ex))
+        );
+        container.appendChild(exercisesList);
+      });
+    } catch (error) {
+      console.error("Failed to render category page:", error);
+      container.innerHTML =
+        '<p class="error-message">Не удалось загрузить упражнения. <a href="exercises.html">Вернуться к списку разделов</a></p>';
+    }
+  }
+
+  function createExerciseElement(exercise) {
+    const item = document.createElement("div");
+    item.className = "exercise-item";
+    item.innerHTML = `
+            <div class="exercise-header">
+                <span>${exercise.title}</span><span class="indicator">+</span>
+            </div>
+            <div class="exercise-content">
+                ${
+                  exercise.description.goal
+                    ? `
+                    <div class="exercise-section">
+                        <h4>Цель:</h4>
+                        <p>${exercise.description.goal}</p>
+                    </div>`
+                    : ""
+                }
+                ${
+                  exercise.description.technique
+                    ? `
+                    <div class="exercise-section">
+                        <h4>Техника выполнения:</h4>
+                        <ol>${exercise.description.technique
+                          .map((step) => `<li>${step}</li>`)
+                          .join("")}</ol>
+                    </div>`
+                    : ""
+                }
+                ${
+                  exercise.description.sensation
+                    ? `
+                    <div class="exercise-section">
+                        <h4>Что вы почувствуете:</h4>
+                        <p>${exercise.description.sensation}</p>
+                    </div>`
+                    : ""
+                }
+            </div>
+        `;
+    return item;
+  }
+
+  container.addEventListener("click", (event) => {
+    const header = event.target.closest(".exercise-header");
+    if (!header) return;
+
+    const item = header.parentElement;
+    const content = item.querySelector(".exercise-content");
+    const indicator = header.querySelector(".indicator");
+
+    if (item.classList.contains("active")) {
+      content.style.maxHeight = null;
+      item.classList.remove("active");
+      indicator.textContent = "+";
+    } else {
+      const activeItem = container.querySelector(".exercise-item.active");
+      if (activeItem) {
+        activeItem.classList.remove("active");
+        activeItem.querySelector(".exercise-content").style.maxHeight = null;
+        activeItem.querySelector(".indicator").textContent = "+";
+      }
+      item.classList.add("active");
+      content.style.maxHeight = content.scrollHeight + "px";
+      indicator.textContent = "−";
+    }
+  });
+
+  init();
 });
